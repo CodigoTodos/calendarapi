@@ -1,0 +1,201 @@
+swagger: '2.0'
+info:
+  description: Api Documentation
+  version: '1.0'
+  title: Api Documentation
+  termsOfService: urn:tos
+  contact: {}
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+host: localhost:8080
+basePath: /
+tags:
+  - name: person-controller
+    description: Person Controller
+  - name: availability-controller
+    description: Availability Controller
+schemes:
+- "http"
+paths:
+  /persons:
+    get:
+      tags:
+        - person-controller
+      summary: Find all persons (Candidates and Interviewers)
+      operationId: findAllUsingGET
+      produces:
+        - "application/json"
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Person'
+    post:
+      tags:
+        - person-controller
+      summary: Creates a New Person 
+      operationId: createUsingPOST
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: body
+          name: person
+          description: person
+          required: true
+          schema:
+            $ref: '#/definitions/Person'
+      responses:
+        '201':
+          description: Created
+          schema:
+            $ref: '#/definitions/Person'
+  /persons/{id}:
+    get:
+      tags:
+        - person-controller
+      summary: Find Person by ID
+      operationId: findByIdUsingGET
+      produces:
+        - "application/json"
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Person'
+
+    put:
+      tags:
+        - person-controller
+      summary: Updates a Person by ID
+      operationId: updateUsingPUT
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+          format: int64
+        - in: body
+          name: person
+          description: person
+          required: true
+          schema:
+            $ref: '#/definitions/Person'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Person'
+    delete:
+      tags:
+        - person-controller
+      summary: Deletes a Person by ID
+      operationId: deleteUsingDELETE
+      produces:
+        - '*/*'
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+  /availability/{personsIdList}:
+    get:
+      tags:
+        - availability-controller
+      summary: Finds common availability for a candidate and one or more interviewers.In the personsIdList the first position should be the candidate id.
+      operationId: getAvailabilityUsingGET
+      produces:
+        - "application/json"
+      parameters:
+        - name: personsIdList
+          in: path
+          description: personsIdList
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/AvailabilitySlot'
+ 
+definitions:
+  Person:
+    type: object
+    required:
+      - name
+      - personType
+      - availabilitySlotsList
+    properties:
+      id:
+        type: integer
+        example: 0
+      name:
+        type: string
+        example: Ines
+      personType:
+        type: string
+        example: INTERVIEWER
+        enum:
+          - CANDIDATE
+          - INTERVIEWER
+      availabilitySlotsList:
+        type: array
+        example: [[0,"MONDAY","09:00","10:00"],[0,"MONDAY","10:00","11:00"]]
+        items:
+          $ref: '#/definitions/AvailabilitySlot'
+        
+    title: Person
+  AvailabilitySlot:
+    type: object
+    required:
+      - dayOfWeek
+      - startTime
+      - finishTime
+    properties:
+      id:
+        type: integer
+        example: 0
+      dayOfWeek:
+        type: string
+        example: MONDAY
+        enum:
+          - MONDAY
+          - TUESDAY
+          - WEDNESDAY
+          - THURSDAY
+          - FRIDAY
+          - SATURDAY
+          - SUNDAY
+      startTime:
+        type: string
+        example: 09:00
+      finishTime:
+        type: string
+        example: 10:00
+    title: AvailabilitySlot
+ 
+  
+  
+ 
